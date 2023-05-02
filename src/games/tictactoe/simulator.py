@@ -5,7 +5,7 @@ from games.game_simulator import GameSimulator
 
 class TicTacToeSimulator(GameSimulator):
 
-    def __init__(self, player1: TicTacToePlayer, player2: TicTacToePlayer, num_cols: int = 3):
+    def __init__(self, player1: TicTacToePlayer, player2: TicTacToePlayer, num_cols: int = 24):
         super(TicTacToeSimulator, self).__init__([player1, player2])
         """
         the number of rows and cols from the connect4 grid

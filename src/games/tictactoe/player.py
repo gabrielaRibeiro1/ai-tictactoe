@@ -4,10 +4,16 @@ from games.tictactoe.result import TicTacToeResult
 from games.player import Player
 
 
+
+
 class TicTacToePlayer(Player, ABC):
+
+    # andre aqui
+
 
     def __init__(self, name):
         super().__init__(name)
+
 
         """
         stats is a dictionary that will store the number of times each result occurred
@@ -33,3 +39,5 @@ class TicTacToePlayer(Player, ABC):
     def event_result(self, pos: int, result: TicTacToeResult):
         if pos == self.get_current_pos():
             self.__stats[result] += 1
+
+    # TODO!: CHANGE PLAYER POSITIONs

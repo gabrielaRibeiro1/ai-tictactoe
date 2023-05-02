@@ -6,7 +6,7 @@ from games.state import State
 class Player(ABC):
 
     """
-    :param name: name of the player (simply a text identifier for the player)
+    param name: name of the player (simply a text identifier for the player)
     """
     def __init__(self, name):
         # name of the player

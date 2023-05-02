@@ -1,18 +1,38 @@
-from typing import Optional
+from pprint import pprint
+from typing import Optional, List, Tuple
 
+from colors import Colors
 from games.tictactoe.action import TicTacToeAction
 from games.tictactoe.result import TicTacToeResult
 from games.state import State
+
+HORSE_POSITIONS = [
+    # top left
+    (-2, 1),
+    (-1, -2),
+
+    # top right
+    (1, 2),
+    (2, 1),
+
+    # bot right
+    (2, -1),
+    (1, -2),
+
+    # bot left
+    (-2, 1),
+    (-1, 2)
+]
 
 
 class TicTacToeState(State):
     EMPTY_CELL = -1
 
-    def __init__(self, num_cols: int = 3):
+    def __init__(self, num_cols: int = 24):
         super().__init__()
 
-        if num_cols < 3:
-            raise Exception("the number of cols and rows must be 3")
+        if num_cols < 24:
+            raise Exception("the number of cols and rows must be 24")
 
         """
         the dimensions of the board
@@ -40,39 +60,23 @@ class TicTacToeState(State):
         """
         self.__has_winner = False
 
+        """
+        list of players
+        """
+        self.__players_moves = [[], []]
+
     def __check_winner(self, player):
-        # check for 4 across
-        for row in range(0, self.__num_rows ):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row][col + 1] == player and \
-                        self.__grid[row][col + 2] == player:
-                    return True
+        # TODO!: see if the players pieces go from one bord to the other one
 
-        # check for 4 up and down
-        for row in range(0, self.__num_rows - 2):
-            for col in range(0, self.__num_cols):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row + 1][col] == player and \
-                        self.__grid[row + 2][col] == player :
-                    return True
-
-        # check upward diagonal
-        for row in range(2, self.__num_rows):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row - 1][col + 1] == player and \
-                        self.__grid[row - 2][col + 2] == player :
-                    return True
-
-        # check downward diagonal
-        for row in range(0, self.__num_rows - 2):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row][col] == player and \
-                        self.__grid[row + 1][col + 1] == player and \
-                        self.__grid[row + 2][col + 2] == player:
-                    return True
+        # movimento do cavalo
+        # if len(self.__players_moves[self.__acting_player]) > 0:
+        #     last_move = self.__players_moves[self.__acting_player][-1]
+        #
+        #     x_diff = abs(last_move[0] - row)
+        #     y_diff = abs(last_move[1] - col)
+        #
+        #     if not ((x_diff == 1 and y_diff == 2) or (x_diff == 2 and y_diff == 1)):
+        #         return False
 
         return False
 
@@ -82,10 +86,87 @@ class TicTacToeState(State):
     def get_num_players(self):
         return 2
 
-    def validate_action(self, action: TicTacToeAction) -> bool:
+    def _check_if_is_first_play(self):
+        for row_n in range(self.get_num_rows()):
+            for col_n in range(self.get_num_cols()):
+                if self.__grid[row_n][col_n] == self.__acting_player:
+                    return False
+        return True
 
+    # andre
+    def convert_to_position(self, row, col):
+        real_positions = []
+        for position in HORSE_POSITIONS:
+            real_row = row + position[0]
+            real_col = col + position[1]
+
+            if real_row < self.get_num_rows() and real_col < self.get_num_cols():
+                real_positions.append((real_row, real_col))
+
+        # 3
+        # print('real positions', (row, col), real_positions)
+        # 3
+        # exit(0)
+        return real_positions
+
+    def get_lines_for_position(self, row, col):
+        lines = []
+        for position in self.convert_to_position(row, col):
+            if self.__grid[position[0]][position[1]] == self.__acting_player:
+                lines.append(((row, col), (position[0], position[1])))
+        return lines
+
+    def get_lines(self):
+        lines = []
+        for row_n in range(self.get_num_rows()):
+            for col_n in range(self.get_num_cols()):
+                print(f"({row_n:02}, {col_n:02}) - ", self.__grid[row_n][col_n], " - ", self.__acting_player)
+                if self.__grid[row_n][col_n] == self.__acting_player:
+                    lines.extend(self.get_lines_for_position(row_n, col_n))
+
+        self.merge_lines(lines)
+        return lines
+
+    def merge_lines_equal_coordinates(self, n_tuple, n2_tuple):
+        new_line = None
+
+        if n_tuple[0] == n2_tuple[0]:
+            new_line = (n_tuple[1], n2_tuple[1])
+        elif n_tuple[1] == n2_tuple[1]:
+            new_line = (n_tuple[0], n2_tuple[1])
+        elif n_tuple[0] == n2_tuple[1]:
+            new_line = (n_tuple[1], n2_tuple[0])
+        elif n_tuple[1] == n2_tuple[0]:
+            new_line = (n_tuple[0], n2_tuple[1])
+
+        return new_line
+
+    def merge_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
+        for line_n in range(len(lines) - 1):
+            for line_n2 in range(line_n + 1, len(lines)):
+                n_tuple = lines[line_n]
+                n2_tuple = lines[line_n2]
+
+                new_line = self.merge_lines_equal_coordinates(n_tuple, n2_tuple)
+                if new_line is not None:
+                    print("popping", line_n, line_n2)
+                    lines.pop(line_n)
+                    lines.pop(line_n2-1)
+                    lines.append(new_line)
+
+
+    def validate_action(self, action: TicTacToeAction) -> bool:
+        # TODO!: VALIDAR MOVIMENTO DO CAVALO E JOGAR DENTRO DE BORDAS
         col = action.get_col()
         row = action.get_row()
+
+        # se for a primeira jogada do jogador
+        if self._check_if_is_first_play():
+            if col == 0 or col == self.__num_cols:
+                return False
+
+            if row == 0 or row == self.__num_rows:
+                return False
 
         # valid column
         if col < 0 or col >= self.__num_cols:
@@ -101,10 +182,11 @@ class TicTacToeState(State):
 
         return True
 
-
     def update(self, action: TicTacToeAction):
         col = action.get_col()
         row = action.get_row()
+
+        self.__players_moves[self.__acting_player].append([row, col])
 
         # drop the checker
         self.__grid[row][col] = self.__acting_player
@@ -119,21 +201,27 @@ class TicTacToeState(State):
 
     def __display_cell(self, row, col):
         print({
-                  0: 'O',
-                  1: 'X',
+                  0: f'{Colors.RED}R{Colors.END}',
+                  1: f'{Colors.BLUE}B{Colors.END}',
                   TicTacToeState.EMPTY_CELL: ' '
               }[self.__grid[row][col]], end="")
 
     def __display_numbers(self):
         for col in range(0, self.__num_cols):
-            if col < 3:
+            if col == 0:
+                print('  ', end="")
+            if 0 < col < 9:
+                print('   ', end="")
+            if col == 8:
                 print(' ', end="")
+            if col > 8:
+                print('  ', end="")
             print(col, end="")
         print("")
 
     def __display_separator(self):
         for col in range(0, self.__num_cols):
-            print("--", end="")
+            print("----", end="")
         print("-")
 
     def display(self):
@@ -151,9 +239,16 @@ class TicTacToeState(State):
         self.__display_numbers()
         print("")
 
+        print("MADE LINES")
+        pprint(self.get_lines())
+
+
     def __is_full(self):
-        if self.__turns_count > (self.__num_cols * self.__num_rows):
-            return True
+        for row in range(self.__num_rows):
+            for col in range(self.__num_cols):
+                if self.__grid[row][col] == TicTacToeState.EMPTY_CELL:
+                    return False
+        return True
 
     def is_finished(self) -> bool:
         return self.__has_winner or self.__is_full()
@@ -162,7 +257,7 @@ class TicTacToeState(State):
         return self.__acting_player
 
     def clone(self):
-        cloned_state = TicTacToeState( self.__num_cols)
+        cloned_state = TicTacToeState(self.__num_cols)
         cloned_state.__turns_count = self.__turns_count
         cloned_state.__acting_player = self.__acting_player
         cloned_state.__has_winner = self.__has_winner
@@ -201,4 +296,6 @@ class TicTacToeState(State):
         new_state.play(action)
         return new_state
 
-
+    def get_last_move(self, action: TicTacToeAction):
+        col = action.get_col()
+        return col

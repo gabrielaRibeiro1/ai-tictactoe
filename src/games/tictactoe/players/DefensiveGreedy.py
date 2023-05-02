@@ -1,5 +1,5 @@
-from src.games.tictactoe.action import TicTacToeAction
-from src.games.tictactoe.players.OffensiveGreedy import GreedyTicTacToePlayer
+from games.tictactoe.action import TicTacToeAction
+from games.tictactoe.players.OffensiveGreedy import GreedyTicTacToePlayer
 
 
 class DefensiveGreedyPlayer(GreedyTicTacToePlayer):
