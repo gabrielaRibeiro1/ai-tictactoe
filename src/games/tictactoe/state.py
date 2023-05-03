@@ -60,24 +60,28 @@ class TicTacToeState(State):
         """
         self.__has_winner = False
 
-        """
-        list of moves
-        """
-        self.__players_moves = [[], []]
+    def get_row(self, action: TicTacToeAction):
+        return action.get_row()
+
+    def get_col(self, action:TicTacToeAction):
+        return action.get_col()
 
 
     def __check_winner(self, player):
         # TODO!: see if the players pieces go from one bord to the other one
+        lines = []
+        for col_n in range(self.get_num_cols()):
+            if self.__grid[0][col_n] != self.EMPTY_CELL and self.__grid[23][col_n] != self.EMPTY_CELL:
+                lines = self.get_lines(self)
+                for line_n in range(len(lines) - 1):
+                    for line_n2 in range(line_n + 1, len(lines)):
+                    #matt atrapalhou
 
-        # movimento do cavalo
-        # if len(self.__players_moves[self.__acting_player]) > 0:
-        #     last_move = self.__players_moves[self.__acting_player][-1]
-        #
-        #     x_diff = abs(last_move[0] - row)
-        #     y_diff = abs(last_move[1] - col)
-        #
-        #     if not ((x_diff == 1 and y_diff == 2) or (x_diff == 2 and y_diff == 1)):
-        #         return False
+
+
+        for row_n in range(self.get_num_rows()):
+            if self.__grid[row_n][0] != self.EMPTY_CELL and self.__grid[row_n][23] != self.EMPTY_CELL:
+                lines = self.get_lines(self)
 
         return False
 
@@ -104,8 +108,6 @@ class TicTacToeState(State):
             if real_row < self.get_num_rows() and real_col < self.get_num_cols():
                 real_positions.append((real_row, real_col))
 
-        print('real positions', (row, col), real_positions)
-
         return real_positions
 
     def get_lines_for_position(self, row, col):
@@ -114,19 +116,14 @@ class TicTacToeState(State):
             if self.__grid[position[0]][position[1]] == self.__acting_player:
                 lines.append(((row, col), (position[0], position[1])))
 
-        print(f"get_lines_for_position {lines}")
-
         return lines
 
     def get_lines(self):
         lines = []
         for row_n in range(self.get_num_rows()):
             for col_n in range(self.get_num_cols()):
-                #print(f"({row_n:02}, {col_n:02}) - ", self.__grid[row_n][col_n], " - ", self.__acting_player)
-                if self.__grid[row_n][col_n] == self.__acting_player:
+                  if self.__grid[row_n][col_n] == self.__acting_player:
                     lines.extend(self.get_lines_for_position(row_n, col_n))
-
-        print(f"get_lines {lines}")
 
         self.merge_lines(lines)
         return lines
@@ -147,15 +144,12 @@ class TicTacToeState(State):
 
     def merge_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
         for line_n in range(len(lines) - 1):
-            for line_n2 in range(line_n + 1, len(lines) - 1):
+            for line_n2 in range(line_n + 1, len(lines)):
                 n_tuple = lines[line_n]
                 n2_tuple = lines[line_n2]
 
                 new_line = self.merge_lines_equal_coordinates(n_tuple, n2_tuple)
                 if new_line is not None:
-                    print("popping", line_n, line_n2)
-                    lines.pop(line_n)
-                    lines.pop(line_n2 - 1)
                     lines.append(new_line)
 
     def validate_action(self, action: TicTacToeAction) -> bool:
@@ -184,18 +178,10 @@ class TicTacToeState(State):
 
         return True
 
-    def save_last_play(self, position: TicTacToeAction):
-        row = position.get_row()
-        col = position.get_col()
-
-        self.__players_moves[self.__acting_player].append([row, col])
-        return self.__players_moves
 
     def update(self, action: TicTacToeAction):
         col = action.get_col()
         row = action.get_row()
-
-        self.save_last_play(action)
 
         # drop the checker
         self.__grid[row][col] = self.__acting_player
@@ -248,9 +234,6 @@ class TicTacToeState(State):
         self.__display_numbers()
         print("")
 
-        print("MADE LINES")
-        pprint(f"display {self.get_lines()}")
-
     def __is_full(self):
         for row in range(self.__num_rows):
             for col in range(self.__num_cols):
@@ -290,20 +273,7 @@ class TicTacToeState(State):
     def before_results(self):
         pass
 
-    def get_possible_actions(self):
-        actions = []
-        for i in range(0, self.__num_rows):
-            for j in range(0, self.__num_cols):
-                action = TicTacToeAction(i, j)
-                if self.validate_action(action):
-                    actions.append(action)
-        return actions
-
     def sim_play(self, action):
         new_state = self.clone()
         new_state.play(action)
         return new_state
-
-    def get_last_move(self, action: TicTacToeAction):
-        col = action.get_col()
-        return col

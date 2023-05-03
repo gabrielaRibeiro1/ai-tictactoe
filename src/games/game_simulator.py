@@ -4,6 +4,7 @@ from games.player import Player
 from games.state import State
 
 
+
 class GameSimulator(ABC):
 
     def __init__(self, players: list):
