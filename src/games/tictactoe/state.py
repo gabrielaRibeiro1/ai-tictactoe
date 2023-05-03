@@ -61,9 +61,10 @@ class TicTacToeState(State):
         self.__has_winner = False
 
         """
-        list of players
+        list of moves
         """
         self.__players_moves = [[], []]
+
 
     def __check_winner(self, player):
         # TODO!: see if the players pieces go from one bord to the other one
@@ -103,10 +104,8 @@ class TicTacToeState(State):
             if real_row < self.get_num_rows() and real_col < self.get_num_cols():
                 real_positions.append((real_row, real_col))
 
-        # 3
-        # print('real positions', (row, col), real_positions)
-        # 3
-        # exit(0)
+        print('real positions', (row, col), real_positions)
+
         return real_positions
 
     def get_lines_for_position(self, row, col):
@@ -114,15 +113,20 @@ class TicTacToeState(State):
         for position in self.convert_to_position(row, col):
             if self.__grid[position[0]][position[1]] == self.__acting_player:
                 lines.append(((row, col), (position[0], position[1])))
+
+        print(f"get_lines_for_position {lines}")
+
         return lines
 
     def get_lines(self):
         lines = []
         for row_n in range(self.get_num_rows()):
             for col_n in range(self.get_num_cols()):
-                print(f"({row_n:02}, {col_n:02}) - ", self.__grid[row_n][col_n], " - ", self.__acting_player)
+                #print(f"({row_n:02}, {col_n:02}) - ", self.__grid[row_n][col_n], " - ", self.__acting_player)
                 if self.__grid[row_n][col_n] == self.__acting_player:
                     lines.extend(self.get_lines_for_position(row_n, col_n))
+
+        print(f"get_lines {lines}")
 
         self.merge_lines(lines)
         return lines
@@ -143,7 +147,7 @@ class TicTacToeState(State):
 
     def merge_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
         for line_n in range(len(lines) - 1):
-            for line_n2 in range(line_n + 1, len(lines)):
+            for line_n2 in range(line_n + 1, len(lines) - 1):
                 n_tuple = lines[line_n]
                 n2_tuple = lines[line_n2]
 
@@ -151,12 +155,10 @@ class TicTacToeState(State):
                 if new_line is not None:
                     print("popping", line_n, line_n2)
                     lines.pop(line_n)
-                    lines.pop(line_n2-1)
+                    lines.pop(line_n2 - 1)
                     lines.append(new_line)
 
-
     def validate_action(self, action: TicTacToeAction) -> bool:
-        # TODO!: VALIDAR MOVIMENTO DO CAVALO E JOGAR DENTRO DE BORDAS
         col = action.get_col()
         row = action.get_row()
 
@@ -182,11 +184,18 @@ class TicTacToeState(State):
 
         return True
 
+    def save_last_play(self, position: TicTacToeAction):
+        row = position.get_row()
+        col = position.get_col()
+
+        self.__players_moves[self.__acting_player].append([row, col])
+        return self.__players_moves
+
     def update(self, action: TicTacToeAction):
         col = action.get_col()
         row = action.get_row()
 
-        self.__players_moves[self.__acting_player].append([row, col])
+        self.save_last_play(action)
 
         # drop the checker
         self.__grid[row][col] = self.__acting_player
@@ -240,8 +249,7 @@ class TicTacToeState(State):
         print("")
 
         print("MADE LINES")
-        pprint(self.get_lines())
-
+        pprint(f"display {self.get_lines()}")
 
     def __is_full(self):
         for row in range(self.__num_rows):
