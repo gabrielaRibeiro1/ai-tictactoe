@@ -1,9 +1,10 @@
 from games.game_simulator import GameSimulator
+from games.tictactoe.players.OffensiveGreedy import OfensiveTicTacToePlayer
 from games.tictactoe.simulator import TicTacToeSimulator
 from games.tictactoe.players.human import HumanTicTacToePlayer
-from games.tictactoe.players.OffensiveGreedy import GreedyTicTacToePlayer
+
 from games.tictactoe.players.minimax import MinimaxTicTacToePlayer
-from games.tictactoe.players.DefensiveGreedy import DefensiveGreedyPlayer
+
 from games.tictactoe.players.random import RandomTicTacToePlayer
 
 
@@ -23,7 +24,10 @@ def main():
     
     #run_simulation("name", TicTacToeSimulator(HumanTicTacToePlayer("player1"), HumanTicTacToePlayer("player2")), num_iterations)
 
-    tic = TicTacToeSimulator(HumanTicTacToePlayer("player1"), HumanTicTacToePlayer("player2"))
+    #tic = TicTacToeSimulator(HumanTicTacToePlayer("player1"), HumanTicTacToePlayer("player2"))
+
+    tic = TicTacToeSimulator(HumanTicTacToePlayer("player1"), OfensiveTicTacToePlayer("player2"))
+
     tic.run_simulation()
 
 

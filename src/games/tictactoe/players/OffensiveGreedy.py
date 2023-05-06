@@ -6,7 +6,7 @@ from games.state import State
 from games.tictactoe.state import TicTacToeState
 
 
-class GreedyTicTacToePlayer(TicTacToePlayer):
+class OfensiveTicTacToePlayer(TicTacToePlayer):
     RANDOM_POSITIONS = [
         (1, 1),
         (1, 20),
@@ -23,21 +23,20 @@ class GreedyTicTacToePlayer(TicTacToePlayer):
                """
         self.__players_moves = [[], []]
 
-
     def is_first_play(state: TicTacToeState):
         for row in range(state.get_num_rows()):
             for col in range(state.get_num_cols()):
                 if state.get_grid()[row][col] != TicTacToeState.EMPTY_CELL:
                     return False
         return True
-    
+
     def save_last_play(self, state: TicTacToeState):
         row = state.get_row()
         col = state.get_col()
 
         self.__players_moves[self.player_num].append([row, col])
         return self.__players_moves
-    
+
     @classmethod
     def get_possible_actions(cls, state: TicTacToeState):
         # receber lista de ultimo movimento
@@ -59,9 +58,9 @@ class GreedyTicTacToePlayer(TicTacToePlayer):
             corner = random.choice(cls.RANDOM_POSITIONS)
             return TicTacToeAction(corner[0], corner[1])
         else:
-            chosen_position = cls.get_possible_actions(state)
+            chosen_position = random.choice(cls.get_possible_actions(state))
             state.display()
-            return chosen_position
+            return TicTacToeAction(chosen_position[0], chosen_position[1])
 
     def event_action(self, pos: int, action, new_state: State):
         # ignore

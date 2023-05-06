@@ -70,20 +70,38 @@ class TicTacToeState(State):
     def __check_winner(self, player):
         # TODO!: see if the players pieces go from one bord to the other one
         lines = []
+
         for col_n in range(self.get_num_cols()):
             if self.__grid[0][col_n] != self.EMPTY_CELL and self.__grid[23][col_n] != self.EMPTY_CELL:
-                lines = self.get_lines(self)
-                for line_n in range(len(lines) - 1):
-                    for line_n2 in range(line_n + 1, len(lines)):
-                    #matt atrapalhou
+                lines = self.get_lines()
+                print(lines)
 
+        sorted_lines = sorted(lines, key=lambda coord: coord[1])
 
+        for i in range(1, len(sorted_lines)):
+            curr_coord = sorted_lines[i]
+            prev_coord = sorted_lines[i - 1]
+            if curr_coord[0] != prev_coord[0] + 1:
+                print(curr_coord, prev_coord)
+                return False
+            else:
+                return True
 
         for row_n in range(self.get_num_rows()):
             if self.__grid[row_n][0] != self.EMPTY_CELL and self.__grid[row_n][23] != self.EMPTY_CELL:
-                lines = self.get_lines(self)
+                lines = self.get_lines()
+                print(lines)
 
-        return False
+        sorted_lines = sorted(lines, key=lambda coord: coord[0])
+
+        for i in range(1, len(sorted_lines)):
+            curr_coord = sorted_lines[i]
+            prev_coord = sorted_lines[i - 1]
+            if curr_coord[0] != prev_coord[0] + 1:
+                print(curr_coord, prev_coord)
+                return False
+            else:
+                return True
 
     def get_grid(self):
         return self.__grid
@@ -126,6 +144,7 @@ class TicTacToeState(State):
                     lines.extend(self.get_lines_for_position(row_n, col_n))
 
         self.merge_lines(lines)
+        pprint(lines)
         return lines
 
     def merge_lines_equal_coordinates(self, n_tuple, n2_tuple):
@@ -145,6 +164,7 @@ class TicTacToeState(State):
     def merge_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
         for line_n in range(len(lines) - 1):
             for line_n2 in range(line_n + 1, len(lines)):
+                print(range(line_n + 1, len(lines)))
                 n_tuple = lines[line_n]
                 n2_tuple = lines[line_n2]
 
@@ -233,6 +253,8 @@ class TicTacToeState(State):
 
         self.__display_numbers()
         print("")
+
+        pprint(self.get_lines())
 
     def __is_full(self):
         for row in range(self.__num_rows):
