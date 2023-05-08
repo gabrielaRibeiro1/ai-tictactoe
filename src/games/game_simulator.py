@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from games.player import Player
 from games.state import State
-
+from games.tictactoe import action
 
 
 class GameSimulator(ABC):
@@ -111,7 +111,7 @@ class GameSimulator(ABC):
 
             # obtain a valid action
             while True:
-                selected_action = players[pos].get_action(state.clone())
+                selected_action = players[pos].get_action(state.clone(), action)
                 if state.validate_action(selected_action):
                     break
 

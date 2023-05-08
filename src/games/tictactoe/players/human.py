@@ -10,7 +10,7 @@ class HumanTicTacToePlayer(TicTacToePlayer):
         super().__init__(name)
 
 
-    def get_action(self, state: TicTacToeState):
+    def get_action(self, state: TicTacToeState, action: TicTacToeAction):
         state.display()
 
         while True:

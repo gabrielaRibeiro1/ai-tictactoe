@@ -23,45 +23,48 @@ class OfensiveTicTacToePlayer(TicTacToePlayer):
                """
         self.__players_moves = [[], []]
 
-    def is_first_play(state: TicTacToeState):
+    def is_first_play(self, state: TicTacToeState):
+        if not isinstance(state, TicTacToeState):
+            raise TypeError("state must be an instance of TicTacToeState")
+
         for row in range(state.get_num_rows()):
             for col in range(state.get_num_cols()):
-                if state.get_grid()[row][col] != TicTacToeState.EMPTY_CELL:
+                if state.get_grid() != TicTacToeState.EMPTY_CELL:
                     return False
         return True
 
-    def save_last_play(self, state: TicTacToeState):
-        row = state.get_row()
-        col = state.get_col()
+
+
+    def save_last_play(self, state: TicTacToeState, action: TicTacToeAction):
+        row = state.get_rows(action)
+        col = state.get_cols(action)
 
         self.__players_moves[self.player_num].append([row, col])
-        return self.__players_moves
+        self.last_action = action
 
-    @classmethod
-    def get_possible_actions(cls, state: TicTacToeState):
-        # receber lista de ultimo movimento
-        players_moves = state.save_last_play()
-        last_move = players_moves[-1]
+    def get_possible_actions(self, state: TicTacToeState, action : TicTacToeAction):
+        # Check if last action is not None
+            # receive list of last move
+            players_moves = self.save_last_play(state, action)
+            last_move = players_moves[-1]
 
-        # ver possiveis movimentos para esse ponto
-        real_coord = state.convert_to_position(last_move[0], last_move[1])
+            # see possible moves for this point
+            real_coord = state.convert_to_position(last_move[0], last_move[1])
 
-        # escolher um ponto random
-        action_coord = random.choice(real_coord)
+            # choose a random point
+            action_coord = random.choice(real_coord)
 
-        return action_coord
+            return action_coord
 
-    @classmethod
-    def get_action(cls, state: TicTacToeState, action: TicTacToeAction):
-        # se for a primeira jogada
-        if cls.is_first_play(state):
-            corner = random.choice(cls.RANDOM_POSITIONS)
+    def get_action(self, state: TicTacToeState, action :TicTacToeAction):
+        # if it's the first move
+        if self.is_first_play(state):
+            corner = random.choice(self.RANDOM_POSITIONS)
             return TicTacToeAction(corner[0], corner[1])
         else:
-            chosen_position = random.choice(cls.get_possible_actions(state))
+            chosen_position = random.choice(self.get_possible_actions(state, action))
             state.display()
             return TicTacToeAction(chosen_position[0], chosen_position[1])
-
     def event_action(self, pos: int, action, new_state: State):
         # ignore
         pass

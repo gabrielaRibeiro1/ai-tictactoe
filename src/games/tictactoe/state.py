@@ -60,12 +60,11 @@ class TicTacToeState(State):
         """
         self.__has_winner = False
 
-    def get_row(self, action: TicTacToeAction):
+    def get_rows(self, action: TicTacToeAction):
         return action.get_row()
 
-    def get_col(self, action:TicTacToeAction):
+    def get_cols(self, action: TicTacToeAction):
         return action.get_col()
-
 
     def __check_winner(self, player):
         # TODO!: see if the players pieces go from one bord to the other one

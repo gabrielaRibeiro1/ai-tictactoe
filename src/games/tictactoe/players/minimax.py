@@ -1,5 +1,6 @@
 import math
 
+from games.tictactoe.action import TicTacToeAction
 from games.tictactoe.player import TicTacToePlayer
 from games.tictactoe.result import TicTacToeResult
 from games.tictactoe.state import TicTacToeState
@@ -130,7 +131,7 @@ class MinimaxTicTacToePlayer(TicTacToePlayer):
                 beta = min(beta, value)
             return value
 
-    def get_action(self, state: TicTacToeState):
+    def get_action(self, state: TicTacToeState, action :TicTacToeAction):
         return self.minimax(state, 5)
 
     def event_action(self, pos: int, action, new_state: State):
