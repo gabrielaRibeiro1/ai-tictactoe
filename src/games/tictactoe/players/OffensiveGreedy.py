@@ -33,19 +33,17 @@ class OfensiveTicTacToePlayer(TicTacToePlayer):
                     return False
         return True
 
-
-
-    def save_last_play(self, state: TicTacToeState, action: TicTacToeAction):
-        row = state.get_rows(action)
-        col = state.get_cols(action)
+    def save_last_play(self,  action: TicTacToeAction):
+        row = action.get_row()
+        col = action.get_col()
 
         self.__players_moves[self.player_num].append([row, col])
-        self.last_action = action
+        return self.__players_moves[self.player_num]
 
     def get_possible_actions(self, state: TicTacToeState, action : TicTacToeAction):
         # Check if last action is not None
             # receive list of last move
-            players_moves = self.save_last_play(state, action)
+            players_moves = self.save_last_play(action)
             last_move = players_moves[-1]
 
             # see possible moves for this point
