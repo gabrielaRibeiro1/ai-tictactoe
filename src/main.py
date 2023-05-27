@@ -1,11 +1,12 @@
+from games.Twixt.players.DefensiveGreedy import DefensiveTwixtPlayer
 from games.game_simulator import GameSimulator
-from games.tictactoe.players.OffensiveGreedy import OfensiveTicTacToePlayer
-from games.tictactoe.simulator import TicTacToeSimulator
-from games.tictactoe.players.human import HumanTicTacToePlayer
+from games.Twixt.players.OffensiveGreedy import OffensiveTwixtPlayer
+from games.Twixt.simulator import TwixtSimulator
+from games.Twixt.players.human import HumanTwixtPlayer
 
-from games.tictactoe.players.minimax import MinimaxTicTacToePlayer
+from games.Twixt.players.minimax import MinimaxTwixtPlayer
 
-from games.tictactoe.players.random import RandomTicTacToePlayer
+from games.Twixt.players.random import RandomTwixtPlayer
 
 
 def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
@@ -18,17 +19,23 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
     print("Results for the game:")
     simulator.print_stats()
 
+
 def main():
     print("ESTG IA Games Simulator")
-    #num_iterations = 100
-    
-    #run_simulation("name", TicTacToeSimulator(HumanTicTacToePlayer("player1"), HumanTicTacToePlayer("player2")), num_iterations)
+    num_iterations = 100
 
-    #tic = TicTacToeSimulator(HumanTicTacToePlayer("player1"), HumanTicTacToePlayer("player2"))
+    twixt_simulations = [
+        
+        {
 
-    tic = TicTacToeSimulator(HumanTicTacToePlayer("player1"), OfensiveTicTacToePlayer("player2"))
+            "name": "Twixt - Human VS Random",
+            "player1": HumanTwixtPlayer("Human"),
+            "player2": DefensiveTwixtPlayer("Random")
+        }
+    ]
 
-    tic.run_simulation()
+    for sim in twixt_simulations:
+        run_simulation(sim["name"], TwixtSimulator(sim["player1"], sim["player2"]), num_iterations)
 
 
 if __name__ == "__main__":

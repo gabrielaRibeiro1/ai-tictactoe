@@ -1,13 +1,13 @@
 import math
 
-from games.tictactoe.action import TicTacToeAction
-from games.tictactoe.player import TicTacToePlayer
-from games.tictactoe.result import TicTacToeResult
-from games.tictactoe.state import TicTacToeState
+from games.Twixt.action import TwixtAction
+from games.Twixt.player import TwixtPlayer
+from games.Twixt.result import TwixtResult
+from games.Twixt.state import TwixtState
 from games.state import State
 
 
-class MinimaxTicTacToePlayer(TicTacToePlayer):
+class MinimaxTwixtPlayer(TwixtPlayer):
 
     def __init__(self, name):
         super().__init__(name)
@@ -17,7 +17,7 @@ class MinimaxTicTacToePlayer(TicTacToePlayer):
     It's not a great heuristic as it doesn't take into consideration a defensive approach
     '''
 
-    def __heuristic(self, state: TicTacToeState):
+    def __heuristic(self, state: TwixtState):
         grid = state.get_grid()
         longest = 0
 
@@ -90,14 +90,14 @@ class MinimaxTicTacToePlayer(TicTacToePlayer):
     to optimize the search :param is_initial_node: if true, the function will return the action with max ev, 
     otherwise it return the max ev (ev = expected value) """
 
-    def minimax(self, state: TicTacToeState, depth: int, alpha: int = -math.inf, beta: int = math.inf,
+    def minimax(self, state: TwixtState, depth: int, alpha: int = -math.inf, beta: int = math.inf,
                 is_initial_node: bool = True):
         # first we check if we are in a terminal node (victory, draw or loose)
         if state.is_finished():
             return {
-                TicTacToeResult.WIN: 40,
-                TicTacToeResult.LOOSE: -40,
-                TicTacToeResult.DRAW: 0
+                TwixtResult.WIN: 40,
+                TwixtResult.LOOSE: -40,
+                TwixtResult.DRAW: 0
             }[state.get_result(self.get_current_pos())]
 
         # if we reached the maximum depth, we will return the value of the heuristic
@@ -131,7 +131,7 @@ class MinimaxTicTacToePlayer(TicTacToePlayer):
                 beta = min(beta, value)
             return value
 
-    def get_action(self, state: TicTacToeState, action :TicTacToeAction):
+    def get_action(self, state: TwixtState, action :TwixtAction):
         return self.minimax(state, 5)
 
     def event_action(self, pos: int, action, new_state: State):

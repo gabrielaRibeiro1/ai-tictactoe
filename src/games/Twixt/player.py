@@ -1,12 +1,12 @@
 from abc import ABC
 
-from games.tictactoe.result import TicTacToeResult
+from games.Twixt.result import TwixtResult
 from games.player import Player
 
 
 
 
-class TicTacToePlayer(Player, ABC):
+class TwixtPlayer(Player, ABC):
 
     # andre aqui
 
@@ -19,7 +19,7 @@ class TicTacToePlayer(Player, ABC):
         stats is a dictionary that will store the number of times each result occurred
         """
         self.__stats = {}
-        for c4res in TicTacToeResult:
+        for c4res in TwixtResult:
             self.__stats[c4res] = 0
 
         """
@@ -28,7 +28,7 @@ class TicTacToePlayer(Player, ABC):
         self.__num_games = 0
 
     def print_stats(self):
-        num_wins = self.__stats[TicTacToeResult.WIN]
+        num_wins = self.__stats[TwixtResult.WIN]
         print(
             f"Player {self.get_name()}: {num_wins}/{self.__num_games} wins ({num_wins * 100.0 / self.__num_games} win "
             f"rate)")
@@ -36,7 +36,7 @@ class TicTacToePlayer(Player, ABC):
     def event_new_game(self):
         self.__num_games += 1
 
-    def event_result(self, pos: int, result: TicTacToeResult):
+    def event_result(self, pos: int, result: TwixtResult):
         if pos == self.get_current_pos():
             self.__stats[result] += 1
 

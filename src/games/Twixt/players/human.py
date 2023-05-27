@@ -1,16 +1,14 @@
-from games.tictactoe.action import TicTacToeAction
-from games.tictactoe.player import TicTacToePlayer
-from games.tictactoe.state import TicTacToeState
+from games.Twixt.action import TwixtAction
+from games.Twixt.player import TwixtPlayer
+from games.Twixt.state import TwixtState
 
 
-
-class HumanTicTacToePlayer(TicTacToePlayer):
+class HumanTwixtPlayer(TwixtPlayer):
 
     def __init__(self, name):
         super().__init__(name)
 
-
-    def get_action(self, state: TicTacToeState, action: TicTacToeAction):
+    def get_action(self, state: TwixtState):
         state.display()
 
         while True:
@@ -21,14 +19,14 @@ class HumanTicTacToePlayer(TicTacToePlayer):
                 row = int(input(f"Player {state.get_acting_player()}, choose a row: "))
                 col = int(input(f"Player {state.get_acting_player()}, choose a column: "))
 
-                return TicTacToeAction(col, row)
+                return TwixtAction(col, row)
             except Exception:
                 continue
 
-    def event_action(self, pos: int, action, new_state: TicTacToeState):
+    def event_action(self, pos: int, action, new_state: TwixtState):
         # ignore
         pass
 
-    def event_end_game(self, final_state: TicTacToeState):
+    def event_end_game(self, final_state: TwixtState):
         # ignore
         pass

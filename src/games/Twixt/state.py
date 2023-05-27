@@ -2,8 +2,8 @@ from pprint import pprint
 from typing import Optional, List, Tuple
 
 from colors import Colors
-from games.tictactoe.action import TicTacToeAction
-from games.tictactoe.result import TicTacToeResult
+from games.Twixt.action import TwixtAction
+from games.Twixt.result import TwixtResult
 from games.state import State
 
 HORSE_POSITIONS = [
@@ -25,7 +25,7 @@ HORSE_POSITIONS = [
 ]
 
 
-class TicTacToeState(State):
+class TwixtState(State):
     EMPTY_CELL = -1
 
     def __init__(self, num_cols: int = 24):
@@ -43,7 +43,7 @@ class TicTacToeState(State):
         """
         the grid
         """
-        self.__grid = [[TicTacToeState.EMPTY_CELL for _i in range(self.__num_cols)] for _j in range(self.__num_rows)]
+        self.__grid = [[TwixtState.EMPTY_CELL for _i in range(self.__num_cols)] for _j in range(self.__num_rows)]
 
         """
         counts the number of turns in the current game
@@ -60,47 +60,86 @@ class TicTacToeState(State):
         """
         self.__has_winner = False
 
-    def get_rows(self, action: TicTacToeAction):
+        """ list of moves"""
+        self.__players_moves = [[], []]
+
+    def get_rows(self, action: TwixtAction):
         return action.get_row()
 
-    def get_cols(self, action: TicTacToeAction):
+    def get_cols(self, action: TwixtAction):
         return action.get_col()
 
     def __check_winner(self, player):
         # TODO!: see if the players pieces go from one bord to the other one
-        lines = []
 
-        for col_n in range(self.get_num_cols()):
-            if self.__grid[0][col_n] != self.EMPTY_CELL and self.__grid[23][col_n] != self.EMPTY_CELL:
-                lines = self.get_lines()
-                print(lines)
+        final_line_red = []
+        final_line_blue = []
+        lines_red = []
+        lines_blue = []
 
-        sorted_lines = sorted(lines, key=lambda coord: coord[1])
+        if player == 0:
+            for col_n_top in range(0, self.__num_cols):
+                for col_n_bottom in range(0, self.__num_cols):
+                    if self.__grid[0][col_n_top] == player and self.__grid[23][col_n_bottom] == player:
+                        lines_blue.append(self.get_lines())
 
-        for i in range(1, len(sorted_lines)):
-            curr_coord = sorted_lines[i]
-            prev_coord = sorted_lines[i - 1]
-            if curr_coord[0] != prev_coord[0] + 1:
-                print(curr_coord, prev_coord)
-                return False
-            else:
-                return True
+            sorted_lines = sorted(lines_blue, key=lambda coord: coord[1])
 
-        for row_n in range(self.get_num_rows()):
-            if self.__grid[row_n][0] != self.EMPTY_CELL and self.__grid[row_n][23] != self.EMPTY_CELL:
-                lines = self.get_lines()
-                print(lines)
+            for list in sorted_lines:
+                for line in list:
+                    start_coord = line[0]
+                    end_coord = line[1]
+                    # Access individual coordinates
+                    start_row, start_col = start_coord
+                    end_row, end_col = end_coord
 
-        sorted_lines = sorted(lines, key=lambda coord: coord[0])
+                    row_diff = abs(start_row - end_row)
+                    col_diff = abs(start_col - end_col)
 
-        for i in range(1, len(sorted_lines)):
-            curr_coord = sorted_lines[i]
-            prev_coord = sorted_lines[i - 1]
-            if curr_coord[0] != prev_coord[0] + 1:
-                print(curr_coord, prev_coord)
-                return False
-            else:
-                return True
+                    if (row_diff == 2 and col_diff == 1) or (col_diff == 2 and row_diff == 1):
+                        final_line_blue.append(start_coord)
+
+                        # Print the coordinates
+                        print(f"Start: ({start_row}, {start_col}), End: ({end_row}, {end_col})")
+                        print(final_line_blue)
+
+                        x_coordinates = [point[0] for point in final_line_blue if 0 <= point[0] <= 23]
+
+                        # Check if all x-coordinates are unique
+                        if len(x_coordinates) == len(set(x_coordinates)):
+                            return True
+                        else:
+                            return False
+
+        if player == 1:
+            for row_n_top in range(0, self.__num_rows):
+                for row_n_bottom in range(0, self.__num_rows):
+                    if self.__grid[0][row_n_top] == player and self.__grid[23][row_n_bottom] == player:
+                        lines_red.append(self.get_lines())
+
+            sorted_lines2 = sorted(lines_red, key=lambda coord: coord[0])
+
+            for list in sorted_lines2:
+                for line in list:
+                    start_coord = line[0]
+                    end_coord = line[1]
+                    # Access individual coordinates
+                    start_row, start_col = start_coord
+                    end_row, end_col = end_coord
+
+                    row_diff = abs(start_row - end_row)
+                    col_diff = abs(start_col - end_col)
+
+                    if (row_diff == 2 and col_diff == 1) or (col_diff == 2 and row_diff == 1):
+                        final_line_red.append(start_coord)
+
+                        x_coordinates = [point[0] for point in final_line_blue if 0 <= point[0] <= 23]
+
+                        # Check if all x-coordinates are unique
+                        if len(x_coordinates) == len(set(x_coordinates)):
+                            return True
+                        else:
+                            return False
 
     def get_grid(self):
         return self.__grid
@@ -115,7 +154,6 @@ class TicTacToeState(State):
                     return False
         return True
 
-    # andre
     def convert_to_position(self, row, col):
         real_positions = []
         for position in HORSE_POSITIONS:
@@ -139,11 +177,10 @@ class TicTacToeState(State):
         lines = []
         for row_n in range(self.get_num_rows()):
             for col_n in range(self.get_num_cols()):
-                  if self.__grid[row_n][col_n] == self.__acting_player:
+                if self.__grid[row_n][col_n] == self.__acting_player:
                     lines.extend(self.get_lines_for_position(row_n, col_n))
 
         self.merge_lines(lines)
-        pprint(lines)
         return lines
 
     def merge_lines_equal_coordinates(self, n_tuple, n2_tuple):
@@ -163,7 +200,6 @@ class TicTacToeState(State):
     def merge_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
         for line_n in range(len(lines) - 1):
             for line_n2 in range(line_n + 1, len(lines)):
-                print(range(line_n + 1, len(lines)))
                 n_tuple = lines[line_n]
                 n2_tuple = lines[line_n2]
 
@@ -171,7 +207,7 @@ class TicTacToeState(State):
                 if new_line is not None:
                     lines.append(new_line)
 
-    def validate_action(self, action: TicTacToeAction) -> bool:
+    def validate_action(self, action: TwixtAction) -> bool:
         col = action.get_col()
         row = action.get_row()
 
@@ -192,13 +228,12 @@ class TicTacToeState(State):
             return False
 
         # full column
-        if self.__grid[row][col] != TicTacToeState.EMPTY_CELL:
+        if self.__grid[row][col] != TwixtState.EMPTY_CELL:
             return False
 
         return True
 
-
-    def update(self, action: TicTacToeAction):
+    def update(self, action: TwixtAction):
         col = action.get_col()
         row = action.get_row()
 
@@ -217,7 +252,7 @@ class TicTacToeState(State):
         print({
                   0: f'{Colors.RED}R{Colors.END}',
                   1: f'{Colors.BLUE}B{Colors.END}',
-                  TicTacToeState.EMPTY_CELL: ' '
+                  TwixtState.EMPTY_CELL: ' '
               }[self.__grid[row][col]], end="")
 
     def __display_numbers(self):
@@ -245,20 +280,22 @@ class TicTacToeState(State):
         for row in range(0, self.__num_rows):
             print('|', end="")
             for col in range(0, self.__num_cols):
-                self.__display_cell(row, col)
-                print('|', end="")
+                if col == 0 or col == 22:
+                    self.__display_cell(row, col)
+                    print(f'{Colors.BLUE} |{Colors.END}', end="  ")
+                else:
+                    self.__display_cell(row, col)
+                    print('|', end="  ")
             print("")
             self.__display_separator()
 
         self.__display_numbers()
         print("")
 
-        pprint(self.get_lines())
-
     def __is_full(self):
         for row in range(self.__num_rows):
             for col in range(self.__num_cols):
-                if self.__grid[row][col] == TicTacToeState.EMPTY_CELL:
+                if self.__grid[row][col] == TwixtState.EMPTY_CELL:
                     return False
         return True
 
@@ -269,7 +306,7 @@ class TicTacToeState(State):
         return self.__acting_player
 
     def clone(self):
-        cloned_state = TicTacToeState(self.__num_cols)
+        cloned_state = TwixtState(self.__num_cols)
         cloned_state.__turns_count = self.__turns_count
         cloned_state.__acting_player = self.__acting_player
         cloned_state.__has_winner = self.__has_winner
@@ -278,11 +315,11 @@ class TicTacToeState(State):
                 cloned_state.__grid[row][col] = self.__grid[row][col]
         return cloned_state
 
-    def get_result(self, pos) -> Optional[TicTacToeResult]:
+    def get_result(self, pos) -> Optional[TwixtResult]:
         if self.__has_winner:
-            return TicTacToeResult.LOOSE if pos == self.__acting_player else TicTacToeResult.WIN
+            return TwixtResult.LOOSE if pos == self.__acting_player else TwixtResult.WIN
         if self.__is_full():
-            return TicTacToeResult.DRAW
+            return TwixtResult.DRAW
         return None
 
     def get_num_rows(self):
@@ -298,3 +335,15 @@ class TicTacToeState(State):
         new_state = self.clone()
         new_state.play(action)
         return new_state
+
+    def save_last_play(self):
+        if self.__acting_player == 0:
+            for i in range(0, self.__num_cols):
+                for j in range(0, self.__num_rows):
+                    self.__players_moves[self.__acting_player].append([i, j])
+
+        return self.__players_moves[self.__acting_player]
+
+    def last_play_defensive(self):
+        if self.__acting_player == 1:
+            return self.__players_moves[0]

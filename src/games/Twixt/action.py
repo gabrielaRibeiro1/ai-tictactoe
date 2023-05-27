@@ -1,6 +1,6 @@
-class TicTacToeAction:
+class TwixtAction:
     """
-    a tictactoe action is simple - it only takes the value of the column and the row to play
+    a Twixt action is simple - it only takes the value of the column and the row to play
     """
     __col: int
     __row: int
