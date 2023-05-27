@@ -25,12 +25,31 @@ def main():
     num_iterations = 100
 
     twixt_simulations = [
-        
-        {
 
-            "name": "Twixt - Human VS Random",
+        {
+            "name": "Twixt : OFENSIVE  - HUMAN",
             "player1": HumanTwixtPlayer("Human"),
-            "player2": DefensiveTwixtPlayer("Random")
+            "player2": OffensiveTwixtPlayer("Ofensive bot")
+        },
+        {
+            "name": "Twixt : DEFENSIVE  - HUMAN",
+            "player1": HumanTwixtPlayer("Human"),
+            "player2": DefensiveTwixtPlayer("Defensive bot")
+        },
+        {
+            "name": "Twixt : DEFENSIVE  - RANDOM",
+            "player1": RandomTwixtPlayer("Random"),
+            "player2": DefensiveTwixtPlayer("Defensive bot")
+        },
+        {
+            "name": "Twixt : OFENSIVE  - RANDOM",
+            "player1": RandomTwixtPlayer("Random"),
+            "player2": OffensiveTwixtPlayer("Ofensive bot")
+        },
+        {
+            "name": "HUMAN - RANDOM",
+            "player1": RandomTwixtPlayer("Random"),
+            "player1": HumanTwixtPlayer("Human"),
         }
     ]
 

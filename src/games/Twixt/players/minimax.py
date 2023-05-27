@@ -131,8 +131,8 @@ class MinimaxTwixtPlayer(TwixtPlayer):
                 beta = min(beta, value)
             return value
 
-    def get_action(self, state: TwixtState, action :TwixtAction):
-        return self.minimax(state, 5)
+    def get_action(self, state: TwixtState):
+        return self.minimax(state,5)
 
     def event_action(self, pos: int, action, new_state: State):
         # ignore
