@@ -21,13 +21,17 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 
 
 def main():
-    print("ESTG IA Games Simulator")
-    num_iterations = 100
+    print("\n----ESTG IA Games Simulator----")
+    print("\nAuthors - Gabriela Ribeiro , Nuno Lopes")
+    print("\nRules:The players take turns placing pegs of their respective colors on the board, one peg per turn.\nThe player with the lighter color makes the first move.\nA player may not place a peg on their opponent's border rows.\nThe player that draws a line from one border to the other wins.\n")
+
+    num_iterations = 30
 
     twixt_simulations = [
 
         {
             "name": "Twixt : OFENSIVE  - HUMAN",
+
             "player1": HumanTwixtPlayer("Human"),
             "player2": OffensiveTwixtPlayer("Ofensive bot")
         },
