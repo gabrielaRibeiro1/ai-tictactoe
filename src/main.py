@@ -23,7 +23,7 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("\n----ESTG IA Games Simulator----")
     print("\nAuthors - Gabriela Ribeiro , Nuno Lopes")
-    print("\nRules:The players take turns placing pegs of their respective colors on the board, one peg per turn.\nThe player with the lighter color makes the first move.\nA player may not place a peg on their opponent's border rows.\nThe player that draws a line from one border to the other wins.\n")
+    print("\nRules:The players take turns placing pegs of their respective colors on the board, one peg per turn.\nThe player with the lighter color makes the first move.\nA player may not place a peg on their opponent's border rows.\nThe player that draws a line from one border to the other with knights chess moves wins.\n")
 
     num_iterations = 30
 

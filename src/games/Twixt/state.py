@@ -99,10 +99,6 @@ class TwixtState(State):
                     if (row_diff == 2 and col_diff == 1) or (col_diff == 2 and row_diff == 1):
                         final_line_blue.append(start_coord)
 
-                        # Print the coordinates
-                        print(f"Start: ({start_row}, {start_col}), End: ({end_row}, {end_col})")
-                        print(final_line_blue)
-
                         x_coordinates = [point[0] for point in final_line_blue if 0 <= point[0] <= 23]
 
                         # Check if all x-coordinates are unique

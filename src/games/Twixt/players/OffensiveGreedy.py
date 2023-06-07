@@ -22,11 +22,9 @@ class OffensiveTwixtPlayer(TwixtPlayer):
     def get_possible_actions(self, state: TwixtState):
         players_moves = state.save_last_play()
         last_move = players_moves[-1]
-        print(last_move)
 
         # ver possiveis movimentos para esse ponto
         real_coord = state.convert_to_position(last_move[0], last_move[1])
-        print(real_coord)
 
         return real_coord
 
